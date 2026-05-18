@@ -1,0 +1,34 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/telegram.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/telegram",
+      "dest": "/api/telegram.ts"
+    },
+    {
+      "src": "/",
+      "dest": "/api/telegram.ts"
+    }
+  ],
+  "functions": {
+    "api/telegram.ts": {
+      "maxDuration": 300
+    }
+  },
+  "env": {
+    "TELEGRAM_TOKEN": "@telegram_token",
+    "KITE_RPC_URL": "@kite_rpc_url",
+    "KITE_PRIVATE_KEY": "@kite_private_key",
+    "AGENT_A_PRIVATE_KEY": "@agent_a_private_key",
+    "AGENT_B_PRIVATE_KEY": "@agent_b_private_key",
+    "AGENT_C_PRIVATE_KEY": "@agent_c_private_key",
+    "PREDICTION_MARKET_ADDRESS": "@prediction_market_address",
+    "USDC_ADDRESS": "@usdc_address"
+  }
+}

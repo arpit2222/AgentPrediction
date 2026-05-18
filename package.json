@@ -1,0 +1,32 @@
+{
+  "name": "agentprediction",
+  "version": "1.0.0",
+  "description": "Autonomous agent-native prediction markets on Kite AI — Kite AI Global Hackathon 2026",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "test:coverage": "hardhat coverage",
+    "test:agents": "cd agent-framework && npm test -- --runInBand",
+    "test:all": "bash scripts/test.sh all",
+    "deploy:local": "hardhat run scripts/deploy.js --network hardhat",
+    "deploy:testnet": "hardhat run scripts/deploy.js --network kite-testnet",
+    "node": "hardhat node",
+    "clean": "hardhat clean",
+    "agent:demo": "cd agent-framework && npm start",
+    "bot:dev": "cd telegram-bot && npm run dev",
+    "dashboard:dev": "cd dashboard && npm run dev",
+    "dashboard:build": "cd dashboard && npm run build",
+    "install:all": "npm install && cd agent-framework && npm install && cd ../telegram-bot && npm install && cd ../dashboard && npm install"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
+    "hardhat": "^2.22.0",
+    "chai": "^4.4.1",
+    "ethers": "^6.13.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.2",
+    "dotenv": "^16.4.5"
+  }
+}
