@@ -42,8 +42,11 @@ describe('DataFetcher — parseQuestion', () => {
 
 describe('DataFetcher — sentiment fallback', () => {
   it('returns neutral sentiment when no NewsAPI key', async () => {
-    const fetcher = new DataFetcher(''); // empty key → fallback
+    const saved = process.env.NEWSAPI_KEY;
+    delete process.env.NEWSAPI_KEY;
+    const fetcher = new DataFetcher('');
     const result = await fetcher.getMarketSentiment('bitcoin');
+    process.env.NEWSAPI_KEY = saved;
     expect(result.score).toBe(0);
     expect(result.articleCount).toBe(0);
   });
