@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "outputDirectory": "public",
   "functions": {
     "api/telegram.ts": {
       "maxDuration": 300
@@ -8,10 +9,6 @@
   "routes": [
     {
       "src": "/api/telegram",
-      "dest": "/api/telegram.ts"
-    },
-    {
-      "src": "/",
       "dest": "/api/telegram.ts"
     }
   ]
