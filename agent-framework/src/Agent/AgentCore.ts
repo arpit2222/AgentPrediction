@@ -132,8 +132,10 @@ export class Agent {
     const excess = confidence - minConfidenceToBet;
     const scale = range > 0 ? excess / range : 0;
     const stakeUsdc = baseStakeUsdc + (maxStakeUsdc - baseStakeUsdc) * scale;
+    // Round to 2 decimal places to avoid floating-point issues in parseUnits
+    const rounded = Math.round(stakeUsdc * 100) / 100;
 
-    return parseUsdc(Math.floor(stakeUsdc));
+    return parseUsdc(rounded);
   }
 
   // ── Blockchain ─────────────────────────────────────────────────────────────

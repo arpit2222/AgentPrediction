@@ -12,9 +12,9 @@ import type {
 // Each agent has a different analytical "personality" for diverse predictions.
 
 function buildDefaultAgents(): AgentConfig[] {
-  const minConf = parseInt(process.env.MIN_CONFIDENCE_TO_BET || '40', 10);
-  const baseStake = parseInt(process.env.BASE_STAKE_USDC || '100', 10);
-  const maxStake = parseInt(process.env.MAX_STAKE_USDC || '500', 10);
+  const minConf = parseFloat(process.env.MIN_CONFIDENCE_TO_BET || '40');
+  const baseStake = parseFloat(process.env.BASE_STAKE_USDC || '100');
+  const maxStake = parseFloat(process.env.MAX_STAKE_USDC || '500');
 
   return [
     {
