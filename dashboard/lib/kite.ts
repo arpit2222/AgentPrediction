@@ -15,7 +15,7 @@ function getProvider() {
 }
 
 function fmtUsdc(wei: bigint): string {
-  return (Number(wei) / 1e6).toFixed(2);
+  return (Number(wei) / 1e18).toFixed(4);
 }
 
 export async function fetchMarketCount(): Promise<number> {

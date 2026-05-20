@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { AgentOrchestrator } from '../../../agent-framework/src/Orchestration/AgentOrchestrator';
 import { KiteAgent } from '../../../agent-framework/src/Blockchain/KiteIntegration';
-import { getWallet, formatUsdc } from '../../../agent-framework/src/Blockchain/Signer';
+import { getWallet, formatUsdc, parseUsdc } from '../../../agent-framework/src/Blockchain/Signer';
 import type { OrchestratorResult, AgentPrediction } from '../../../agent-framework/src/types';
 import type { MarketSummary, MarketResultData, AgentStatEntry } from '../messages/BotMessages';
 
@@ -142,7 +142,7 @@ export class MarketManager {
     amountUsdc: number
   ): Promise<string> {
     const kite = new KiteAgent(wallet);
-    const amount = BigInt(Math.floor(amountUsdc * 1e6));
+    const amount = parseUsdc(amountUsdc);
 
     const balance = await kite.getUsdcBalance();
     if (balance < amount) {

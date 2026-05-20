@@ -5,8 +5,11 @@ const bold = (s: string) => `*${s}*`;
 const code = (s: string) => `\`${s}\``;
 const line = () => '─'.repeat(32);
 
+const TOKEN_DECIMALS = 1e18;
+
 function formatUsdc(units: bigint): string {
-  return (Number(units) / 1e6).toLocaleString('en-US', { maximumFractionDigits: 2 });
+  const val = Number(units) / TOKEN_DECIMALS;
+  return val < 0.01 ? val.toFixed(6) : val.toLocaleString('en-US', { maximumFractionDigits: 4 });
 }
 
 function shortenHash(hash: string): string {
@@ -200,9 +203,9 @@ Get testnet USDC at: https://faucet.gokite.ai/
     const statusIcon = data.resolved ? (data.outcome ? '✅ YES won' : '❌ NO won') : '⏳ Active';
     const yesTotal = formatUsdc(data.totalYesStake);
     const noTotal = formatUsdc(data.totalNoStake);
-    const grand = Number(data.totalYesStake + data.totalNoStake) / 1e6;
-    const yesPct = grand > 0 ? ((Number(data.totalYesStake) / 1e6 / grand) * 100).toFixed(1) : '50.0';
-    const noPct = grand > 0 ? ((Number(data.totalNoStake) / 1e6 / grand) * 100).toFixed(1) : '50.0';
+    const grand = Number(data.totalYesStake + data.totalNoStake) / TOKEN_DECIMALS;
+    const yesPct = grand > 0 ? ((Number(data.totalYesStake) / TOKEN_DECIMALS / grand) * 100).toFixed(1) : '50.0';
+    const noPct = grand > 0 ? ((Number(data.totalNoStake) / TOKEN_DECIMALS / grand) * 100).toFixed(1) : '50.0';
 
     let msg = `
 📊 ${bold(`Market #${marketId} Results`)}

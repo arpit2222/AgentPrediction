@@ -150,7 +150,8 @@ export class AgentPredictionBot {
     }
 
     // Check balance
-    const amountBig = BigInt(Math.floor(amount * 1e6));
+    const { parseUsdc } = await import('../../../agent-framework/src/Blockchain/Signer');
+    const amountBig = parseUsdc(amount);
     const { ethers } = await import('ethers');
     const { ERC20_ABI } = await import('../../../agent-framework/src/Blockchain/ContractABIs');
     const { getProvider } = await import('../../../agent-framework/src/Blockchain/Signer');
