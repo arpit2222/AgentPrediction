@@ -10,9 +10,17 @@ const DEMO_BETS: UserBet[] = [
   { marketId: 2, question: 'Will ETH flip BTC in market cap?', outcome: 'NO', amountUsdc: 75, txHash: '0x789abc', timestamp: Date.now() - 7200_000, settled: false },
 ];
 
+async function connectMetaMask(): Promise<string> {
+  const win = window as unknown as { ethereum?: { request: (a: { method: string }) => Promise<string[]> } };
+  if (!win.ethereum) throw new Error('no_metamask');
+  const accounts = await win.ethereum.request({ method: 'eth_requestAccounts' });
+  return accounts[0];
+}
+
 export default function UserDashboard() {
   const [walletAddress, setWalletAddress] = useState('');
   const [inputAddress, setInputAddress] = useState('');
+  const [mmError, setMmError] = useState('');
   const bets = DEMO_BETS;
 
   const totalBets = bets.length;
@@ -51,23 +59,42 @@ export default function UserDashboard() {
             </button>
           </div>
         ) : (
-          <div className="flex gap-2">
-            <input
-              value={inputAddress}
-              onChange={(e) => setInputAddress(e.target.value)}
-              placeholder="Enter your wallet address (0x...)"
-              className="flex-1 rounded-lg border border-gray-700 bg-surface-3 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-accent focus:outline-none"
-            />
+          <div className="space-y-3">
             <button
-              onClick={() => {
-                if (inputAddress.startsWith('0x') && inputAddress.length >= 40) {
-                  setWalletAddress(inputAddress.trim());
+              onClick={async () => {
+                setMmError('');
+                try {
+                  const addr = await connectMetaMask();
+                  setWalletAddress(addr);
+                } catch (e: unknown) {
+                  const msg = e instanceof Error ? e.message : '';
+                  if (msg === 'no_metamask') setMmError('MetaMask not found — paste your address below.');
+                  else setMmError('Connection rejected.');
                 }
               }}
-              className="rounded-lg bg-accent/20 px-4 py-2 text-sm font-medium text-accent hover:bg-accent/30 transition-colors"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-orange-500/20 px-4 py-2.5 text-sm font-medium text-orange-400 hover:bg-orange-500/30 transition-colors"
             >
-              Connect
+              🦊 Connect MetaMask
             </button>
+            {mmError && <p className="text-xs text-yellow-400">{mmError}</p>}
+            <div className="flex gap-2">
+              <input
+                value={inputAddress}
+                onChange={(e) => setInputAddress(e.target.value)}
+                placeholder="Or paste wallet address (0x...)"
+                className="flex-1 rounded-lg border border-gray-700 bg-surface-3 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-accent focus:outline-none"
+              />
+              <button
+                onClick={() => {
+                  if (inputAddress.startsWith('0x') && inputAddress.length >= 40) {
+                    setWalletAddress(inputAddress.trim());
+                  }
+                }}
+                className="rounded-lg bg-accent/20 px-4 py-2 text-sm font-medium text-accent hover:bg-accent/30 transition-colors"
+              >
+                View
+              </button>
+            </div>
           </div>
         )}
       </div>

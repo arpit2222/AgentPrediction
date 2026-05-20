@@ -45,7 +45,7 @@ export default function Header() {
 
         {/* Telegram CTA */}
         <a
-          href="https://t.me/AgentPredictionBot"
+          href="https://t.me/agentpredictionalphabot"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-1.5 rounded-lg bg-blue-500/20 px-3 py-1.5 text-sm font-medium text-blue-400 transition-colors hover:bg-blue-500/30"
