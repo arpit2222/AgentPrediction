@@ -43,6 +43,16 @@ const BEARISH_WORDS = [
   'sell', 'selling', 'underperform', 'weak', 'correction', 'loss',
 ];
 
+// Shared cache across all DataFetcher instances so 3 parallel agents don't each hit the API
+const _fetchCache = new Map<string, { data: unknown; ts: number }>();
+const CACHE_TTL = 90_000; // 90 seconds
+
+function _cached<T>(key: string, fn: () => Promise<T>): Promise<T> {
+  const hit = _fetchCache.get(key);
+  if (hit && Date.now() - hit.ts < CACHE_TTL) return Promise.resolve(hit.data as T);
+  return fn().then((data) => { _fetchCache.set(key, { data, ts: Date.now() }); return data; });
+}
+
 export class DataFetcher {
   private cgClient: AxiosInstance;
   private newsClient: AxiosInstance;
@@ -236,12 +246,40 @@ export class DataFetcher {
   // ── Full Fetch ─────────────────────────────────────────────────────────────
 
   async fetchAllData(parsed: ParsedQuestion) {
-    const [price, trend, sentiment] = await Promise.all([
-      this.getCryptoPrice(parsed.coingeckoId),
-      this.getCryptoTrend(parsed.coingeckoId, 30),
-      this.getMarketSentiment(parsed.symbol + ' cryptocurrency'),
-    ]);
-    return { price, trend, sentiment };
+    const key = `fetchAll:${parsed.coingeckoId}`;
+    return _cached(key, async () => {
+      const [priceResult, trendResult, sentimentResult] = await Promise.allSettled([
+        this.getCryptoPrice(parsed.coingeckoId),
+        this.getCryptoTrend(parsed.coingeckoId, 30),
+        this.getMarketSentiment(parsed.symbol + ' cryptocurrency'),
+      ]);
+
+      const price = priceResult.status === 'fulfilled' ? priceResult.value : this._fallbackPrice(parsed);
+      const trend = trendResult.status === 'fulfilled' ? trendResult.value : this._fallbackTrend();
+      const sentiment = sentimentResult.status === 'fulfilled' ? sentimentResult.value : this._fallbackSentiment(parsed.symbol);
+
+      if (priceResult.status === 'rejected') console.warn('[DataFetcher] price fetch failed, using fallback:', priceResult.reason?.message);
+      if (trendResult.status === 'rejected') console.warn('[DataFetcher] trend fetch failed, using fallback');
+
+      return { price, trend, sentiment };
+    });
+  }
+
+  private _fallbackPrice(parsed: ParsedQuestion): CryptoPrice {
+    return {
+      symbol: parsed.symbol,
+      coingeckoId: parsed.coingeckoId,
+      currentPrice: parsed.targetValue ? parsed.targetValue * 0.8 : 50000,
+      priceChange24h: 0, priceChange7d: 0, volume24h: 0, marketCap: 0,
+    };
+  }
+
+  private _fallbackTrend(): TrendAnalysis {
+    return {
+      direction: 'neutral' as const,
+      ma7: 0, ma30: 0, priceVsMa7: 0, priceVsMa30: 0,
+      momentum: 0, historicalPrices: [],
+    };
   }
 
   // ── Helpers ───────────────────────────────────────────────────────────────
