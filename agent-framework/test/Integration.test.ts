@@ -14,7 +14,7 @@ import type { AgentConfig } from '../src/types';
 jest.mock('../src/Blockchain/KiteIntegration', () => ({
   KiteAgent: jest.fn().mockImplementation(() => ({
     getAddress: () => '0xMockAgentAddress',
-    getUsdcBalance: async () => BigInt(500 * 1e6),
+    getUsdcBalance: async () => BigInt(500) * BigInt(1e18),
     getKiteBalance: async () => '5.0',
     placePrediction: async ({ outcome }: { outcome: string }) => ({
       txHash: `0x${outcome.toLowerCase()}hash1234`,
@@ -153,8 +153,8 @@ describe('Agent stake sizing integration', () => {
     const atMax = agent.decideStakeAmount(100);
     const atMid = agent.decideStakeAmount(70);
 
-    expect(atMin).toBe(BigInt(100 * 1e6));
-    expect(atMax).toBe(BigInt(500 * 1e6));
+    expect(atMin).toBe(BigInt(100) * BigInt(1e18));
+    expect(atMax).toBe(BigInt(500) * BigInt(1e18));
     // at 70% confidence: 40+(500-100)*(70-40)/60 = 100+200 = 300
     expect(atMid).toBeGreaterThan(atMin);
     expect(atMid).toBeLessThan(atMax);
@@ -163,7 +163,7 @@ describe('Agent stake sizing integration', () => {
   it('never bets above MAX_STAKE regardless of confidence', () => {
     const agent = new Agent(config);
     const stake = agent.decideStakeAmount(99);
-    expect(stake).toBeLessThanOrEqual(BigInt(500 * 1e6));
+    expect(stake).toBeLessThanOrEqual(BigInt(500) * BigInt(1e18));
   });
 });
 

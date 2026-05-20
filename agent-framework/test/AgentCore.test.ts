@@ -6,7 +6,7 @@ jest.mock('../src/Blockchain/KiteIntegration', () => {
   return {
     KiteAgent: jest.fn().mockImplementation(() => ({
       getAddress: () => '0xAgentAddress',
-      getUsdcBalance: async () => BigInt(1_000 * 1e6), // 1000 USDC
+      getUsdcBalance: async () => BigInt(1000) * BigInt(1e18), // 1000 USDC
       getKiteBalance: async () => '10.0',
       placePrediction: async () => ({
         txHash: '0xdeadbeef',
@@ -85,19 +85,19 @@ describe('Agent', () => {
     it('returns base stake at exact threshold', () => {
       const agent = new Agent(makeConfig({ minConfidenceToBet: 40, baseStakeUsdc: 100, maxStakeUsdc: 500 }));
       const stake = agent.decideStakeAmount(40);
-      expect(stake).toBe(BigInt(100 * 1e6));
+      expect(stake).toBe(BigInt(100) * BigInt(1e18));
     });
 
     it('returns max stake at 100% confidence', () => {
       const agent = new Agent(makeConfig({ minConfidenceToBet: 0, baseStakeUsdc: 100, maxStakeUsdc: 500 }));
       const stake = agent.decideStakeAmount(100);
-      expect(stake).toBe(BigInt(500 * 1e6));
+      expect(stake).toBe(BigInt(500) * BigInt(1e18));
     });
 
     it('scales linearly between base and max', () => {
       const agent = new Agent(makeConfig({ minConfidenceToBet: 0, baseStakeUsdc: 0, maxStakeUsdc: 200 }));
       const half = agent.decideStakeAmount(50);
-      expect(half).toBe(BigInt(100 * 1e6)); // 50% of 200
+      expect(half).toBe(BigInt(100) * BigInt(1e18)); // 50% of 200
     });
   });
 

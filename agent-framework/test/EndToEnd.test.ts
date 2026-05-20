@@ -22,7 +22,7 @@ const mockSettle     = jest.fn().mockResolvedValue('0xsettle_hash');
 jest.mock('../src/Blockchain/KiteIntegration', () => ({
   KiteAgent: jest.fn().mockImplementation(() => ({
     getAddress: () => '0xMockAddress',
-    getUsdcBalance: async () => BigInt(5_000 * 1e6),
+    getUsdcBalance: async () => BigInt(5000) * BigInt(1e18),
     getKiteBalance: async () => '10.0',
     createMarket: mockCreateMkt,
     placePrediction: async ({ outcome }: { outcome: string }) =>
@@ -34,7 +34,7 @@ jest.mock('../src/Blockchain/KiteIntegration', () => ({
       deadline: Math.floor(Date.now() / 1000) + 3600,
       resolved: false,
       outcome: false,
-      totalYesStake: BigInt(1170 * 1e6),
+      totalYesStake: BigInt(1170) * BigInt(1e18),
       totalNoStake: BigInt(0),
       predictionCount: 3,
     }),

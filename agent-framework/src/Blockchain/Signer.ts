@@ -22,10 +22,13 @@ export function getWalletFromEnv(envKey: string): ethers.Wallet {
   return getWallet(key);
 }
 
+// Kite testnet token (0x0fF539...) is 18-decimal USDT, not 6-decimal USDC
+const TOKEN_DECIMALS = 18;
+
 export function parseUsdc(amount: number): bigint {
-  return ethers.parseUnits(amount.toString(), 6);
+  return ethers.parseUnits(amount.toString(), TOKEN_DECIMALS);
 }
 
 export function formatUsdc(amount: bigint): string {
-  return ethers.formatUnits(amount, 6);
+  return ethers.formatUnits(amount, TOKEN_DECIMALS);
 }
